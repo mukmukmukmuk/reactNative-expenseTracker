@@ -8,20 +8,32 @@ import RecentExpenses from "./screens/RecentExpenses";
 import AllExpenses from "./screens/AllExpenses";
 import { GlobalStyles } from "./constans/styles";
 import { Ionicons } from "@expo/vector-icons";
-
+import IconButton from "./components/ExpensesOutput/UI/IconButton";
+import { useNavigation } from "@react-navigation/native";
 const BottomTabs = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
 const ExpensesOverview = () => {
   return (
     <BottomTabs.Navigator
-      screenOptions={{
+      screenOptions={({ route, navigation }) => ({
         headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
         headerTintColor: "white",
         tabBarStyle: {
           backgroundColor: GlobalStyles.colors.primary500,
         },
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
-      }}
+        headerRight: ({ tintColor }) => (
+          <IconButton
+            icon="add"
+            size={24}
+            color={tintColor}
+            onPress={() => {
+              navigation.navigate("ManageExpense");
+            }}
+          />
+        ),
+      })}
     >
       <BottomTabs.Screen
         name="RecentExpenses"
@@ -52,15 +64,35 @@ const ExpensesOverview = () => {
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+            headerTintColor: "white",
+          }}
+        >
           <Stack.Screen
             name="ExpensesOverview"
             component={ExpensesOverview}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="ManageExpense" component={ManageExpense} />
+          <Stack.Screen
+            options={({ navigation }) => ({
+              headerLeft: ({ tintColor }) => (
+                <IconButton
+                  icon="close"
+                  size={30}
+                  color={tintColor}
+                  onPress={() => navigation.goBack()}
+                  style={{ marginright: 35 }}
+                />
+              ),
+              presentation: "modal",
+            })}
+            name="ManageExpense"
+            component={ManageExpense}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>
